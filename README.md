@@ -8,6 +8,20 @@ Users sign in with **Google OAuth 2.0**, and only accounts on the allowed domain
 
 **Live demo:** [workspace-portal-govindtech.netlify.app](https://workspace-portal-govindtech.netlify.app)
 
+## Screenshots
+
+| Login | Non-domain account blocked |
+|---|---|
+| ![Login page](docs/screenshots/login.png) | ![Access restricted error](docs/screenshots/access-restricted.png) |
+
+| Dashboard (Admin) | Admin console |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Admin console](docs/screenshots/admin.png) |
+
+<img src="docs/screenshots/mobile-login.png" alt="Login on a phone-sized screen" width="260">
+
+Login and the blocked-account screens are from the live site. Dashboard and Admin show sample data.
+
 | Requirement | Where it lives |
 |---|---|
 | Google Sign-In button | [`src/components/GoogleButton.tsx`](src/components/GoogleButton.tsx) |
@@ -267,8 +281,11 @@ row and clear the variable to remove it. Only exact addresses match; nothing els
     Android Keystore (`expo-secure-store`). Nothing is stored in plain text.
   - **Web:** `localStorage`, the standard for a static SPA with no server to set httpOnly cookies.
     Risk is reduced by PKCE, short token lifetime, no third-party scripts, and the security
-    headers in `netlify.toml` (`X-Frame-Options`, `nosniff`, HSTS, …).
+    headers in `netlify.toml`: a strict **Content-Security-Policy** (only our own scripts run, and the
+    app can only call Supabase), plus `X-Frame-Options`, `nosniff` and HSTS.
   - Only the **publishable** key ships in the app. The secret key is never used client-side.
+  - Signed-out visitors cannot call the database helper functions (`email_is_allowed`, `is_admin`)
+    through the API, so the allowlist and roles can't be probed from outside.
 - **State management.** One `AuthProvider` (React Context) is the single source of truth for
   `status`, `session`, `profile`, `role`, loading flags and errors. Screens read it through `useAuth()`.
 

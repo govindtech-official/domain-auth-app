@@ -178,6 +178,14 @@ revoke execute on function public.handle_new_user()             from public, ano
 revoke execute on function public.set_user_role(uuid, text)     from public, anon;
 grant  execute on function public.set_user_role(uuid, text)     to authenticated;
 
+-- Signed-out visitors must not be able to probe the allowlist or roles through
+-- the API (e.g. rpc/email_is_allowed). RLS policies still need them for
+-- signed-in users, and the sign-up trigger runs as the owner.
+revoke execute on function public.email_is_allowed(text)        from public, anon;
+grant  execute on function public.email_is_allowed(text)        to authenticated;
+revoke execute on function public.is_admin()                    from public, anon;
+grant  execute on function public.is_admin()                    to authenticated;
+
 -- 7. Bootstrap your first admin -----------------------------------------------
 -- Before they sign in for the first time:
 --   insert into public.admin_emails (email) values ('you@hbplus.fit') on conflict do nothing;
