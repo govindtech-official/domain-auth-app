@@ -31,12 +31,22 @@ export function getEmailDomain(email: string | null | undefined): string | null 
  * Domain check used everywhere on the client. The match is exact: a
  * look-alike such as `hbplus.fit.evil.com` or a subdomain such as
  * `mail.hbplus.fit` is NOT accepted.
+ *
+ * `extraEmails` are individual addresses allowed in regardless of domain
+ * (testing accounts). They must also be listed in public.allowed_emails,
+ * which is what the server actually enforces.
  */
 export function isAllowedEmail(
   email: string | null | undefined,
   allowedDomain: string = env.allowedEmailDomain,
+  extraEmails: readonly string[] = env.allowedTestEmails,
 ): boolean {
   const domain = getEmailDomain(email);
+  if (domain === null) return false;
+
+  const normalizedEmail = (email as string).trim().toLowerCase();
+  if (extraEmails.some((e) => e.trim().toLowerCase() === normalizedEmail)) return true;
+
   const allowed = normalizeDomain(allowedDomain);
-  return domain !== null && allowed.length > 0 && domain === allowed;
+  return allowed.length > 0 && domain === allowed;
 }

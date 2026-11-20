@@ -134,6 +134,7 @@ cp .env.example .env
 | `EXPO_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API → Project URL |
 | `EXPO_PUBLIC_SUPABASE_KEY` | The **publishable** key (`sb_publishable_…`), or the legacy `anon` key. **Never the secret / service_role key.** |
 | `EXPO_PUBLIC_ALLOWED_EMAIL_DOMAIN` | `hbplus.fit` (must match `public.allowed_email_domain()` in the SQL) |
+| `EXPO_PUBLIC_ALLOWED_TEST_EMAILS` | Optional, comma-separated off-domain test addresses. Each must also be a row in `public.allowed_emails`. Leave empty in production. |
 
 If a variable is missing, the app shows a "Configuration required" screen instead of crashing.
 
@@ -236,6 +237,16 @@ It is enforced in **layers**, so bypassing the UI does not get anyone in:
 
 The domain lives in two places that must match: `EXPO_PUBLIC_ALLOWED_EMAIL_DOMAIN` (client) and
 `public.allowed_email_domain()` (database).
+
+**Test accounts.** To let one specific off-domain address in (for example a personal Gmail used
+for testing), add it to the database allowlist, which all three layers above check:
+
+```sql
+insert into public.allowed_emails (email) values ('tester@gmail.com') on conflict do nothing;
+```
+
+and list it in `EXPO_PUBLIC_ALLOWED_TEST_EMAILS` so the client gate lets it through too. Delete the
+row and clear the variable to remove it. Only exact addresses match; nothing else on that domain gets in.
 
 ## Security notes
 

@@ -35,7 +35,32 @@ describe('isAllowedEmail', () => {
   });
 
   it('rejects everything when no domain is configured', () => {
-    expect(isAllowedEmail('a@hbplus.fit', '')).toBe(false);
+    expect(isAllowedEmail('a@hbplus.fit', '', [])).toBe(false);
+  });
+});
+
+describe('isAllowedEmail with individually allowed test emails', () => {
+  const extras = ['tester@gmail.com'];
+
+  it('allows a listed address on another domain, ignoring case and spaces', () => {
+    expect(isAllowedEmail('tester@gmail.com', DOMAIN, extras)).toBe(true);
+    expect(isAllowedEmail('  Tester@GMAIL.com ', DOMAIN, extras)).toBe(true);
+  });
+
+  it('still allows the domain alongside the listed address', () => {
+    expect(isAllowedEmail('someone@hbplus.fit', DOMAIN, extras)).toBe(true);
+  });
+
+  it.each([
+    ['other address on the same domain', 'someone-else@gmail.com'],
+    ['listed address as a prefix', 'tester@gmail.com.evil.com'],
+    ['double @ spoof', 'x@hbplus.fit@tester@gmail.com'],
+  ])('rejects %s (%s)', (_label, email) => {
+    expect(isAllowedEmail(email, DOMAIN, extras)).toBe(false);
+  });
+
+  it('allows nothing extra when the list is empty', () => {
+    expect(isAllowedEmail('tester@gmail.com', DOMAIN, [])).toBe(false);
   });
 });
 

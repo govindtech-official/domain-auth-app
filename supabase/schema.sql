@@ -19,16 +19,34 @@ immutable
 set search_path = ''
 as $$ select 'hbplus.fit'::text $$;
 
--- Exact domain match, exactly one "@". Rejects look-alikes such as
--- "user@hbplus.fit.evil.com" and subdomains such as "user@mail.hbplus.fit".
+-- Individual addresses allowed in regardless of domain (e.g. a test account).
+-- Not readable or writable by app users (RLS on, no policies). Add one with:
+--   insert into public.allowed_emails (email) values ('tester@gmail.com') on conflict do nothing;
+-- Remove it again with:
+--   delete from public.allowed_emails where email = 'tester@gmail.com';
+-- Keep EXPO_PUBLIC_ALLOWED_TEST_EMAILS in the app in sync with this table.
+create table if not exists public.allowed_emails (
+  email text primary key check (email = lower(email))
+);
+alter table public.allowed_emails enable row level security;
+revoke all on public.allowed_emails from anon, authenticated;
+
+-- Allowed = exact domain match with exactly one "@" (rejects look-alikes such
+-- as "user@hbplus.fit.evil.com" and subdomains such as "user@mail.hbplus.fit"),
+-- OR the exact address is listed in public.allowed_emails.
+-- security definer: it is also called from RLS policies, where the caller
+-- cannot read allowed_emails directly.
 create or replace function public.email_is_allowed(email text)
 returns boolean
 language sql
-immutable
+stable
+security definer
 set search_path = ''
 as $$
+  -- $1 (not "email") so the subquery can't resolve it to allowed_emails.email.
   select coalesce(
-    lower(email) ~ ('^[^@[:space:]]+@' || replace(public.allowed_email_domain(), '.', '\.') || '$'),
+    lower($1) ~ ('^[^@[:space:]]+@' || replace(public.allowed_email_domain(), '.', '\.') || '$')
+    or exists (select 1 from public.allowed_emails a where a.email = lower(trim($1))),
     false
   );
 $$;
