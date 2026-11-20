@@ -18,7 +18,10 @@ Users sign in with **Google OAuth 2.0**, and only accounts on the allowed domain
 |---|---|
 | ![Dashboard](docs/screenshots/dashboard.png) | ![Admin console](docs/screenshots/admin.png) |
 
-<img src="docs/screenshots/mobile-login.png" alt="Login on a phone-sized screen" width="260">
+<img src="docs/screenshots/android-expo-go.jpg" alt="Running natively on Android in Expo Go" width="260">
+<img src="docs/screenshots/mobile-login.png" alt="Web login on a phone-sized screen" width="260">
+
+Left: the same codebase running natively on an Android phone (Expo Go). Right: the web build on a phone-sized screen.
 
 Login and the blocked-account screens are from the live site. Dashboard and Admin show sample data.
 
