@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Platform, ScrollView, StyleSheet, Text, View, useWindowDimensions, type TextStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { Link } from 'expo-router';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Grain, Spotlight } from '@/components/Atmosphere';
@@ -103,6 +104,10 @@ export default function LoginScreen() {
         <Icon name="shieldCheck" size={15} color={colors.textSubtle} />
         <Text style={styles.cardFooterText}>Personal and non-company accounts are blocked automatically.</Text>
       </View>
+
+      <Link href="/privacy" style={styles.privacyLink}>
+        Privacy policy
+      </Link>
     </View>
   );
 
@@ -303,6 +308,7 @@ const styles = StyleSheet.create({
 
   cardFooter: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: spacing.xl },
   cardFooterText: { ...font.small, color: colors.textSubtle, flex: 1 },
+  privacyLink: { ...font.smallMedium, color: colors.textMuted, marginTop: spacing.md, alignSelf: 'flex-start' },
 
   below: { ...font.small, color: colors.inkSubtle, textAlign: 'center' },
 });

@@ -36,6 +36,8 @@ function RootNavigator() {
     <Stack screenOptions={{ headerShown: false, animation: 'fade', contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="auth/callback" />
+      {/* Public: linked from the Google OAuth consent screen. */}
+      <Stack.Screen name="privacy" options={{ title: 'Privacy policy' }} />
 
       <Stack.Protected guard={!isSignedIn} redirectTo="/dashboard">
         <Stack.Screen name="login" options={{ title: 'Sign in', contentStyle: { backgroundColor: colors.ink } }} />
