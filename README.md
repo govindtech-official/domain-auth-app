@@ -6,7 +6,7 @@ Users sign in with **Google OAuth 2.0**, and only accounts on the allowed domain
 
 > **Access restricted. Please login using your official domain email.**
 
-**Live demo:** `https://<your-site>.netlify.app` ← _replace after deploying_
+**Live demo:** [workspace-portal-govindtech.netlify.app](https://workspace-portal-govindtech.netlify.app)
 
 | Requirement | Where it lives |
 |---|---|
